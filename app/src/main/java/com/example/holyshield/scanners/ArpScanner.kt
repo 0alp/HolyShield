@@ -65,6 +65,7 @@ class ArpScanner : NetworkScanner<ScanResult> {
                 lines.mapNotNull { parseIpNeighLine(it) }
                     .forEach { results.add(it) }
             }
+            println(reader.toString())
         } catch (e: Exception) {
             Log.e(TAG, "An error occured while executing the `ip neigh' command: ${e.message}")
         }
@@ -78,15 +79,14 @@ class ArpScanner : NetworkScanner<ScanResult> {
             if (parts.size < 6 || parts[3] == "00:00:00:00:00:00") return null
             val ip = parts[0]
             val mac = parts[3]
-            val hostname = try {
-                InetAddress.getByName(ip).hostName
-            } catch (e: Exception) {
-                null
-            }
+            val inetAddress = InetAddress.getByName(ip)
+            val resolvedHostname = inetAddress.canonicalHostName
+            val isHostnameResolved = resolvedHostname != inetAddress.hostAddress
+
             ScanResult(
                 ipAddress = InetAddress.getByName(ip),
                 macAddress = mac,
-                hostname = hostname,
+                hostname =  if(isHostnameResolved) resolvedHostname else "unknown",
                 source = "ARP"
             )
         } catch (e: Exception) {
@@ -102,15 +102,13 @@ class ArpScanner : NetworkScanner<ScanResult> {
             if (parts.size < 5 || parts[4] == "00:00:00:00:00:00") return null
             val ip = parts[0]
             val mac = parts[4]
-            val hostname = try {
-                InetAddress.getByName(ip).hostName
-            } catch (e: Exception) {
-                null
-            }
+            val inetAddress = InetAddress.getByName(ip)
+            val resolvedHostname = inetAddress.canonicalHostName
+            val isHostnameResolved = resolvedHostname != inetAddress.hostAddress
             ScanResult(
                 ipAddress = InetAddress.getByName(ip),
                 macAddress = mac,
-                hostname = hostname,
+                hostname =  if(isHostnameResolved) resolvedHostname else "unknown",
                 source = "ARP"
             )
         } catch (e: Exception) {

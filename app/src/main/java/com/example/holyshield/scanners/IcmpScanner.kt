@@ -25,13 +25,16 @@ class IcmpScanner(private val subnetProvider: SubnetProvider) : NetworkScanner<S
                 val host = "$subnet.$i"
                 try {
                     val inetAddress = InetAddress.getByName(host)
+
+                    val resolvedHostname = inetAddress.canonicalHostName
+                    val isHostnameResolved = resolvedHostname != inetAddress.hostAddress
                     if (inetAddress.isReachable(100)) { //wait 100 seconds for response
 
                         results.add(
                             ScanResult(
                                 ipAddress = inetAddress,
                                 source = "ICMP",
-                                hostname =  inetAddress.hostName
+                                hostname =  if(isHostnameResolved) resolvedHostname else "unknown"
                             )
                         )
                     }

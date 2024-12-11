@@ -21,6 +21,7 @@ import com.example.holyshield.providers.WifiSubnetProvider
 import com.example.holyshield.scanners.ArpScanner
 import com.example.holyshield.scanners.IcmpScanner
 import com.example.holyshield.scanners.IntegratedScanner
+import com.example.holyshield.scanners.MDnsScanner
 import com.example.holyshield.scanners.PortScanner
 import kotlinx.coroutines.launch
 
@@ -30,10 +31,10 @@ class NetworkScannerScreen : Screen {
         val context = LocalContext.current
         val wifiManager = remember { context.applicationContext.getSystemService(Context.WIFI_SERVICE) as WifiManager }
         val subnetProvider = remember { WifiSubnetProvider(wifiManager) }
-        val icmpScanner = remember { IcmpScanner(subnetProvider) }
-        val arpScanner = remember { ArpScanner() }
-        val portScanner = PortScanner()
-        val integratedScanner = remember { IntegratedScanner(icmpScanner, arpScanner, portScanner) }
+        val integratedScanner = IntegratedScanner(
+            scanners = listOf(IcmpScanner(subnetProvider), ArpScanner(), MDnsScanner(context)),
+            portScanner = PortScanner()
+        )
         val coroutineScope = rememberCoroutineScope()
 
         Column(
@@ -52,7 +53,7 @@ class NetworkScannerScreen : Screen {
 
 
                     results.forEach { result ->
-                        println("112- Source: ${result.source}, Device: IP=${result.ipAddress.hostAddress}, MAC=${result.macAddress ?: "Bilinmiyor"}, Hostname=${result.hostname ?: "Unknown"}, Open Ports=${result.openPorts.ifEmpty { "unknown" } }")
+                        println("112- Source: ${result.source}, Device: IP=${result.ipAddress.hostAddress}, MAC=${result.macAddress ?: "unknown"}, Hostname=${result.hostname ?: "Unknown"}, Open Ports=${result.openPorts.ifEmpty { "unknown" } }")
                     }
 
                     println("112- Scaning has been complated")
