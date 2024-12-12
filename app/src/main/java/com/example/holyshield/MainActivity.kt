@@ -67,7 +67,7 @@ class MainActivity : ComponentActivity() {
 
                                     TabNavigationItem(tab = Tab2)
                                     TabNavigationItem(tab = HomeTab)
-                                    TabNavigationItem(tab = OptionsPage)
+                                    TabNavigationItem(tab = ScanTab)
                                 }
 
                             }

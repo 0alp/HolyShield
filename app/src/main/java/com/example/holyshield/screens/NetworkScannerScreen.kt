@@ -2,21 +2,20 @@ package com.example.holyshield.screens
 
 import android.content.Context
 import android.net.wifi.WifiManager
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import com.example.holyshield.models.ScanResult
 import com.example.holyshield.providers.WifiSubnetProvider
 import com.example.holyshield.scanners.ArpScanner
 import com.example.holyshield.scanners.IcmpScanner
@@ -37,30 +36,73 @@ class NetworkScannerScreen : Screen {
         )
         val coroutineScope = rememberCoroutineScope()
 
+
+        var scanResults by rememberSaveable { mutableStateOf<List<ScanResult>>(emptyList()) }
+        var isLoading by rememberSaveable { mutableStateOf(false) }
+
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(vertical = 100.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
-            Text(text = "NETWORK SCANNER")
-            Spacer(modifier = Modifier.height(50.dp))
-            Button(onClick = {
-                coroutineScope.launch {
-                    println("112- Scanning has been started")
+            Text(text = "NETWORK SCANNER", style = androidx.compose.material3.MaterialTheme.typography.titleLarge)
+            Spacer(modifier = Modifier.height(20.dp))
 
 
-                    val results = integratedScanner.integratedScan()
+            Button(
+                onClick = {
+                    coroutineScope.launch {
+                        isLoading = true
+                        scanResults = emptyList()
 
 
-                    results.forEach { result ->
-                        println("112- Source: ${result.source}, Device: IP=${result.ipAddress.hostAddress}, MAC=${result.macAddress ?: "unknown"}, Hostname=${result.hostname ?: "Unknown"}, Open Ports=${result.openPorts.ifEmpty { "unknown" } }")
+                        val results = integratedScanner.integratedScan()
+                        scanResults = results
+
+                        isLoading = false
                     }
-
-                    println("112- Scaning has been complated")
-                }
-            }) {
-                Text(text = "START SCAN")
+                },
+                enabled = !isLoading
+            ) {
+                Text(text = if (isLoading) "Scanning..." else "START SCAN")
             }
+
+            Spacer(modifier = Modifier.height(20.dp))
+
+
+            if (isLoading) {
+                CircularProgressIndicator()
+            } else {
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .padding(horizontal = 16.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(scanResults) { result ->
+                        ResultRow(result)
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ResultRow(result: ScanResult) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+        ) {
+            Text(text = "Source: ${result.source}")
+            Text(text = "IP: ${result.ipAddress.hostAddress}")
+            Text(text = "MAC: ${result.macAddress ?: "unknown"}")
+            Text(text = "Hostname: ${result.hostname ?: "Unknown"}")
+            Text(text = "Open Ports: ${result.openPorts.ifEmpty { "unknown" }}")
         }
     }
 }

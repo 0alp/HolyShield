@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.example.holyshield.screens.Screen1
+import com.example.holyshield.screens.HomeScreen
 
 object Tab2: Tab {
     override val options: TabOptions
@@ -33,6 +33,6 @@ object Tab2: Tab {
 
     @Composable
     override fun Content() {
-        Navigator(Screen1())
+        Navigator(HomeScreen())
     }
 }
