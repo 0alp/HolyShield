@@ -23,6 +23,9 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.example.holyshield.tabs.DnsTab
+import com.example.holyshield.tabs.HomeTab
+import com.example.holyshield.tabs.ScanTab
 import com.example.holyshield.ui.theme.HolyShieldTheme
 import com.example.holyshield.utils.PermissionHelper
 
@@ -65,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             bottomBar = {
                                 NavigationBar {
 
-                                    TabNavigationItem(tab = Tab2)
+                                    TabNavigationItem(tab = DnsTab)
                                     TabNavigationItem(tab = HomeTab)
                                     TabNavigationItem(tab = ScanTab)
                                 }

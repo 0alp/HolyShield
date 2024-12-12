@@ -1,26 +1,26 @@
-package com.example.holyshield
+package com.example.holyshield.tabs
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.example.holyshield.screens.HomeScreen
+import com.example.holyshield.screens.NetworkScannerScreen
 
-object Tab2: Tab {
+object ScanTab: Tab {
     override val options: TabOptions
         @Composable
         get() {
-            val title = "Settings"
-            val icon = rememberVectorPainter(Icons.Rounded.Settings)
+            val title = "Scan"
+            val icon = rememberVectorPainter(Icons.Rounded.Search)
 
             return remember {
 
                 TabOptions(
-                    index = 1u,
+                    index = 2u,
                     title = title,
                     icon = icon
 
@@ -33,6 +33,6 @@ object Tab2: Tab {
 
     @Composable
     override fun Content() {
-        Navigator(HomeScreen())
+        Navigator(NetworkScannerScreen())
     }
 }

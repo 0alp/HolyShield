@@ -1,4 +1,4 @@
-package com.example.holyshield
+package com.example.holyshield.tabs
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Home
